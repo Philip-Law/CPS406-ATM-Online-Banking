@@ -15,3 +15,6 @@ class ATMCard:
     
     def get_user(self):
         return self.owner
+    
+    def verify_card_number(self, check_number):
+        return self.card_number == check_number
