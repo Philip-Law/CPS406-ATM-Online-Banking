@@ -1,5 +1,5 @@
 class Transaction:
-    def __init__(self, id, date, action_type, amount):
+    def __init__(self, id: str, date: str, action_type: str, amount: int):
         self.id = id
         self.date = date
         self.action_type = action_type

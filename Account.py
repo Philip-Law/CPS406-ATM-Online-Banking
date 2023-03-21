@@ -3,7 +3,7 @@ from random import randint
 from datetime import date
 
 class Account:
-    def __init__(self, balance):
+    def __init__(self, balance: int):
         self.balance = balance
         self.transaction_history = []
 
