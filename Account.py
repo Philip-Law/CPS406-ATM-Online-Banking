@@ -21,3 +21,8 @@ class Account:
         self.transaction_history
         return transaction
 
+    def get_balance(self):
+        return self.balance
+    
+    def get_transaction_history(self):
+        return self.transaction_history
