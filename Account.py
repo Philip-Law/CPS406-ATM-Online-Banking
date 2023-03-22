@@ -26,3 +26,6 @@ class Account:
     
     def get_transaction_history(self):
         return self.transaction_history
+    
+    def add_transaction(self, new_transaction: Transaction) -> None:
+        self.transaction_history.append(new_transaction)
