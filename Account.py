@@ -31,7 +31,4 @@ class Account:
     
     
     def add_transaction(self, new_transaction: Transaction) -> None:
-        if new_transaction.get_amount() <= 0:
-            raise ValueError("Invalid Transaction balance")
-        
         self.transaction_history.append(new_transaction)
