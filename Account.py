@@ -9,7 +9,7 @@ class Account:
 
     def deposit(self, amount):
         self.balance += amount
-        transaction = Transaction(randint(10000000, 99999999), date.today(), "Deposit", amount)
+        transaction = Transaction(date.today(), "Deposit", amount)
         self.transaction_history.append(transaction)
         return transaction
 
@@ -17,8 +17,8 @@ class Account:
         if self.balance < amount:
             raise ValueError("Insufficient balance")
         self.balance -= amount
-        transaction = Transaction(randint(10000000, 99999999), date.today(), "Withdraw", amount)
-        self.transaction_history
+        transaction = Transaction(date.today(), "Withdraw", amount)
+        self.transaction_history.append(transaction)
         return transaction
 
     def get_balance(self):
@@ -27,5 +27,9 @@ class Account:
     def get_transaction_history(self):
         return self.transaction_history
     
+    
     def add_transaction(self, new_transaction: Transaction) -> None:
+        if new_transaction.get_amount() < 0:
+            raise ValueError("Invalid Transaction balance")
+        
         self.transaction_history.append(new_transaction)
