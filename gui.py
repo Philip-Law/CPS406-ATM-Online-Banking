@@ -466,21 +466,21 @@ class Balance(tk.Frame):
         frame = Frame(self)
         frame.pack(side='top',pady=50)
 
-        tv = ttk.Treeview(frame, columns=(1,2,3), show="headings", height="5")
+        tv = ttk.Treeview(frame, columns=(1,2,3,4), show="headings", height="5")
         tv.pack()
  
 
         tv.heading(1, text="TRANSACTION TYPE")
         tv.heading(2, text="TRANSACTION ID")
         tv.heading(3, text="AMOUNT")
+        tv.heading(4, text="DATE")
 
 
-        tv.insert("", "end", values=("Place Holder", "Place Holder", "Place Holder"))
-        tv.insert("", "end", values=("Place Holder", "Place Holder", "Place Holder"))
-        tv.insert("", "end", values=("Place Holder", "Place Holder", "Place Holder"))
-        tv.insert("", "end", values=("Place Holder", "Place Holder", "Place Holder"))
-        tv.insert("", "end", values=("Place Holder", "Place Holder", "Place Holder"))
-
+        tv.insert("", "end", values=("Place Holder", "Place Holder", "Place Holder", "Place Holder"))
+        tv.insert("", "end", values=("Place Holder", "Place Holder", "Place Holder", "Place Holder"))
+        tv.insert("", "end", values=("Place Holder", "Place Holder", "Place Holder", "Place Holder"))
+        tv.insert("", "end", values=("Place Holder", "Place Holder", "Place Holder", "Place Holder"))
+        tv.insert("", "end", values=("Place Holder", "Place Holder", "Place Holder", "Place Holder"))
 
 
         menu_button = tk.Button(self,command=lambda:controller.show_frame('AccountMenu'),text='Back',relief='raised',borderwidth=1,width=60,height=3, bg='#da0000', fg='white')
