@@ -16,7 +16,7 @@ class ATMSystemController:
         if account_type == "Chequing":
             account = card.get_user().get_chequing_account()
         elif account_type == "Savings":
-            account = card.get_user().get_savings_account
+            account = card.get_user().get_savings_account()
 
         if account.get_balance() < amount:
             return ValueError("Insufficient balance")
