@@ -10,6 +10,8 @@ class Account:
     def deposit(self, amount):
         self.balance += amount
         transaction = Transaction(date.today(), "Deposit", amount)
+        if self.balance <= 0:
+            raise ValueError("Invalid Deposit")
         self.transaction_history.append(transaction)
         return transaction
 
@@ -29,7 +31,4 @@ class Account:
     
     
     def add_transaction(self, new_transaction: Transaction) -> None:
-        if new_transaction.get_amount() < 0:
-            raise ValueError("Invalid Transaction balance")
-        
         self.transaction_history.append(new_transaction)
