@@ -1,5 +1,6 @@
 from ATMCard import ATMCard
 from User import User
+from unittest.mock import MagicMock
 import pytest
 
 @pytest.fixture
@@ -13,7 +14,10 @@ def test_get_PIN(card):
 
 
 def test_get_card_number(card):
-    assert card.get_card_number() >= 1000000000000000 and card.get_card_number() <= 9999999999999999
+    # Mocks a potential card number for a card, as card numbers are randomly generated
+    card.get_card_number = MagicMock(return_value = 1111_2222_3333_4444)
+
+    assert card.get_card_number() == 1111222233334444
 
 
 def test_get_user(card):
