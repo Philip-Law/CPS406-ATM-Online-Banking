@@ -192,7 +192,7 @@ class AccountMenu(tk.Frame):
 
         #Creates label that prompts users to choose an account (chequing/savings)
         self.canvas = tk.Canvas(self, width=1400, height=50, bg='#da0000',highlightbackground='#e8e8e8')
-        self.canvas.create_text(700, 25, text="Choose an account.", justify="center", fill='white', font=('calibri',18))
+        self.canvas.create_text(700, 25, text="Select an account.", justify="center", fill='white', font=('calibri',18))
         self.canvas.pack()
 
         spacer = tk.Label(self,height=3,bg='#e8e8e8')
@@ -245,7 +245,7 @@ class ServiceMenu(tk.Frame):
 
         #Creates label that prompts users to choose a service (withdraw,deposit,transaction log)
         self.canvas = tk.Canvas(self, width=1400, height=50, bg='#da0000',highlightbackground='#e8e8e8')
-        self.canvas.create_text(700, 25, text="Choose a service.", justify="center", fill='white', font=('calibri',18))
+        self.canvas.create_text(700, 25, text="Select a service.", justify="center", fill='white', font=('calibri',18))
         self.left_text = self.canvas.create_text(100, 25, text="", justify="left", fill='white', font=('calibri',18))
         self.right_text = self.canvas.create_text(1300, 25, text="", justify="right", fill='white', font=('calibri',18))
         self.canvas.pack()
@@ -302,7 +302,7 @@ class Withdraw(tk.Frame):
 
         #Prompts the user to enter a withdraw amount
         self.canvas = tk.Canvas(self, width=1400, height=50, bg='#da0000', highlightbackground='#e8e8e8')
-        self.middle_text = self.canvas.create_text(700, 25, text="Select the amount you wish to withdraw from this account.", justify="center", fill='white', font=('calibri', 18))
+        self.middle_text = self.canvas.create_text(700, 25, text="Enter the amount you wish to withdraw from this account.", justify="center", fill='white', font=('calibri', 18))
         self.left_text = self.canvas.create_text(100, 25, text="NAME HERE", justify="left", fill='white', font=('calibri', 18))
         self.right_text = self.canvas.create_text(1300, 25, text="BALANCE HERE", justify="right", fill='white', font=('calibri', 18))
         self.canvas.pack()
@@ -348,7 +348,7 @@ class Withdraw(tk.Frame):
         account = self.controller.shared_data['Account'].get()
         if card is not None and account in ['Chequing', 'Savings']:
             self.canvas.itemconfigure(self.left_text, text=card.get_user().get_name())
-            self.canvas.itemconfigure(self.middle_text, text=f"Select the amount you wish to withdraw from {account} account.")
+            self.canvas.itemconfigure(self.middle_text, text=f"Enter the amount you wish to withdraw from {account} account.")
             self.canvas.itemconfigure(self.right_text, text=f"\t${card.get_user().get_account(account).get_balance()}")
 
 # Deposit Screen
@@ -373,7 +373,7 @@ class Deposit(tk.Frame):
 
         #Prompts the user to enter a deposit amount
         self.canvas = tk.Canvas(self, width=1400, height=50, bg='#da0000', highlightbackground='#e8e8e8')
-        self.middle_text = self.canvas.create_text(700, 25, text="Select the amount you wish to deposit to this account.", justify="center", fill='white', font=('calibri', 18))
+        self.middle_text = self.canvas.create_text(700, 25, text="Enter the amount you wish to deposit to this account.", justify="center", fill='white', font=('calibri', 18))
         self.left_text = self.canvas.create_text(100, 25, text="NAME HERE", justify="left", fill='white', font=('calibri', 18))
         self.right_text = self.canvas.create_text(1300, 25, text="BALANCE HERE", justify="right", fill='white', font=('calibri', 18))
         self.canvas.pack()
@@ -420,7 +420,7 @@ class Deposit(tk.Frame):
         account = self.controller.shared_data['Account'].get()
         if card is not None and account in ['Chequing', 'Savings']:
             self.canvas.itemconfigure(self.left_text, text=card.get_user().get_name())
-            self.canvas.itemconfigure(self.middle_text, text=f"Select the amount you wish to deposit to {account} account.")
+            self.canvas.itemconfigure(self.middle_text, text=f"Enter the amount you wish to deposit to {account} account.")
             self.canvas.itemconfigure(self.right_text, text=f"\t${card.get_user().get_account(account).get_balance()}")
 
 # Approval Screen
@@ -477,67 +477,56 @@ class Approval(tk.Frame):
 # View Balance Screen
 class Balance(tk.Frame):
     def __init__(self, parent, controller):
-
-        #Header/Screen Setup
-        tk.Frame.__init__(self, parent,bg='#e8e8e8')
+        tk.Frame.__init__(self, parent, bg='#e8e8e8')
         self.controller = controller
-        
         self.controller.title('Maze Bank')
         self.controller.state('zoomed')
 
+        # Create header widgets
         img = tk.PhotoImage(file="Logo2.png")
-    
-        mazebank_label = tk.Label(self,image=img,bg='#e8e8e8')
+        mazebank_label = tk.Label(self, image=img, bg='#e8e8e8')
         mazebank_label.image = img
         mazebank_label.pack(pady=25)
+        tk.Label(self, height=2, bg='#e8e8e8').pack()
         
-        spacer = tk.Label(self,height=2,bg='#e8e8e8')
-        spacer.pack()
+        # Create balance canvas
+        self.canvas = tk.Canvas(self, width=1400, height=50, bg='#da0000',highlightbackground='#e8e8e8')
+        self.balance_text = self.canvas.create_text(700, 25, text="Your balance in dollars (CAD).", justify="center", fill='white', font=('calibri',18))
+        self.canvas.pack()
+        tk.Label(self, height=3, bg='#e8e8e8').pack()
 
-        canvas = tk.Canvas(self, width=1400, height=50, bg='#da0000',highlightbackground='#e8e8e8')
-        canvas.create_text(700, 25, text="Your balance in dollars (CAD).", justify="center", fill='white', font=('calibri',18))
-        canvas.pack()
+        # Create transaction history treeview
+        self.transaction_frame = tk.Frame(self)
+        self.transaction_frame.pack(side='top', pady=50)
+        self.transaction_tv = ttk.Treeview(self.transaction_frame, columns=(1, 2, 3, 4), show="headings", height="5")
+        self.transaction_tv.pack()
+        self.transaction_tv.heading(1, text="TRANSACTION TYPE")
+        self.transaction_tv.heading(2, text="TRANSACTION ID")
+        self.transaction_tv.heading(3, text="AMOUNT")
+        self.transaction_tv.heading(4, text="DATE")
 
-        spacer = tk.Label(self,height=3,bg='#e8e8e8')
-        spacer.pack()
-
-        self.canvas3 = tk.Canvas(self, width=200, height=50, bg='#da0000',highlightbackground='#e8e8e8')
-        self.canvas3.pack(side='top')
-
-        self.canvas3.create_text(100, 25, text="", justify="center", fill='white', font=('calibri',18))
-
-        exit_button = tk.Button(self,text='Exit',command=lambda: controller.show_frame('Selection'),relief='raised',borderwidth=1,width=60,height=3, bg='#da0000', fg='white')
-        exit_button.pack(pady=10, side='bottom')
-
-        menu_button = tk.Button(self,command=lambda:controller.show_frame('AccountMenu'),text='Back',relief='raised',borderwidth=1,width=60,height=3, bg='#da0000', fg='white')
-        menu_button.pack(pady=10, side='bottom')
-    
+        # Create exit back buttons
+        tk.Button(self, text='Exit', command=lambda: self.controller.show_frame('Selection'), relief='raised', borderwidth=1, width=60, height=3, bg='#da0000', fg='white').pack(pady=10, side='bottom')
+        tk.Button(self, command=lambda: self.controller.show_frame('AccountMenu'), text='Back', relief='raised', borderwidth=1, width=60, height=3, bg='#da0000', fg='white').pack(pady=10, side='bottom')
 
     def update(self):
+        # Update balance label
         card = self.controller.shared_data['Card']
         account_type = self.controller.shared_data['Account'].get()
+        balance = card.get_user().get_account(account_type).get_balance()
 
-        self.canvas3.itemconfigure(1, text=f"${card.get_user().get_account(account_type).get_balance()}")
+        # Clear existing data from treeview
+        for item in self.transaction_tv.get_children():
+            self.transaction_tv.delete(item)
 
+        # Populate treeview with new transaction history
         transaction_history = card.get_user().get_account(account_type).get_transaction_history()
-        
-        frame = Frame(self)
-        frame.pack(side='top',pady=50)
+        for transaction in transaction_history:
+            self.transaction_tv.insert("", "end", values=(transaction.get_action_type(), transaction.get_id(), transaction.get_amount(), transaction.get_date()))
 
-        tv = ttk.Treeview(frame, columns=(1,2,3,4), show="headings", height="5")
-        tv.pack()
-    
-        tv.heading(1, text="TRANSACTION TYPE")
-        tv.heading(2, text="TRANSACTION ID")
-        tv.heading(3, text="AMOUNT")
-        tv.heading(4, text="DATE")
-
-        if card is not None:
-            for transaction in transaction_history:
-                tv.insert("", "end", values=(transaction.get_action_type(), transaction.get_id(), transaction.get_amount(), transaction.get_date()))
-
-
-            
+        # Update balance text in canvas
+        balance_text = f"Your balance is {balance} dollars (CAD)."
+        self.canvas.itemconfigure(self.balance_text, text=balance_text)
 if __name__ == "__main__":
     app = SampleApp()
     app.mainloop()
