@@ -322,13 +322,13 @@ class Withdraw(tk.Frame):
 
 
         def amount():
-            amount = int(cash.get())
             card = self.controller.shared_data['Card']
             account = self.controller.shared_data['Account'].get()
             check = True
             #If card and account is valid, then withdraw the appropriate amount, else display invalid amount to the screen
             if card is not None and account in ['Chequing', 'Savings']:
                 try:
+                    amount = int(cash.get())
                     self.controller.sys_controller.withdraw_amount(account, card, amount)
                 except ValueError:
                     check = False
@@ -394,13 +394,13 @@ class Deposit(tk.Frame):
         amount_entry.pack(pady=10)
 
         def amount():
-            amount = int(cash.get())
             card = self.controller.shared_data['Card']
             account = self.controller.shared_data['Account'].get()
             check = True
             #If card and account is valid, then deposit the appropriate amount, else display invalid amount to the screen
             if card is not None and account in ['Chequing', 'Savings']:
                 try:
+                    amount = int(cash.get())
                     self.controller.sys_controller.deposit_amount(account, card, amount)
                 except ValueError:
                     check = False
