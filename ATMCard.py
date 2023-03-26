@@ -15,4 +15,3 @@ class ATMCard:
     
     def get_user(self):
         return self.owner
-    

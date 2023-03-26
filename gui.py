@@ -67,11 +67,11 @@ class Selection(tk.Frame):
         tv = ttk.Treeview(frame, columns=(1,2,3), show="headings", height=len(cards), selectmode="browse")
         tv.pack()
 
-        #Depending on the card that is selected, use that ATMCards information and move to next screen
+        # Depending on the card that is selected, use that ATMCards information and move to next screen
         def on_treeview_select(event):
             literal_list = tv.item(tv.focus())["values"]
             card = self.controller.sys_controller.find_card(literal_list[0], literal_list[1], str(literal_list[2]))
-            self.controller.set_card(self.controller.sys_controller.find_card(literal_list[0], literal_list[1], str(literal_list[2])))
+            self.controller.set_card(card)
             self.controller.show_frame('InsertCard')
 
         tv.bind("<<TreeviewSelect>>", on_treeview_select)
@@ -105,7 +105,7 @@ class InsertCard(tk.Frame):
         #Creating label to prompt user to click on card to insert (enter the ATM program)
         CClabel = tk.Label(self, text="Click the Card to Insert", bg='#f0f0f0', font=('Calibri', 25))
         CClabel.place(relx=0.5, rely=0.35, anchor="center")
-
+        
         self.controller.set_card(self.controller.shared_data['Card'])
 
         CC = tk.PhotoImage(file="CC.png")
@@ -144,13 +144,13 @@ class EnterPIN(tk.Frame):
         enter_PIN.focus_set()
         enter_PIN.pack(ipady=7)
 
-        #Hides PIN from other individuals by displaying *'s instead of the PIN itself
+        # Hides PIN from other individuals by displaying *'s instead of the PIN itself
         def handle_focus_in(_):
             enter_PIN.configure(fg='black',show='*')
             
         enter_PIN.bind('<FocusIn>',handle_focus_in)
 
-        #Depending on the card that was inserted, the PIN will be different, if PIN is correct go to Account Menu, otherwise display incorrect password
+        # Depending on the card that was inserted, the PIN will be different, if PIN is correct go to Account Menu, otherwise display incorrect password
         def check_password():
             if PIN.get() == self.controller.shared_data['Card'].get_PIN():
                 PIN.set('')
@@ -522,11 +522,12 @@ class Balance(tk.Frame):
         # Populate treeview with new transaction history
         transaction_history = card.get_user().get_account(account_type).get_transaction_history()
         for transaction in transaction_history:
-            self.transaction_tv.insert("", "end", values=(transaction.get_action_type(), transaction.get_id(), transaction.get_amount(), transaction.get_date()))
+            self.transaction_tv.insert("", "end", values=(transaction.get_action_type(), transaction.get_id(), f"${transaction.get_amount()}", transaction.get_date()))
 
         # Update balance text in canvas
         balance_text = f"Your balance is {balance} dollars (CAD)."
         self.canvas.itemconfigure(self.balance_text, text=balance_text)
+        
 if __name__ == "__main__":
     app = SampleApp()
     app.mainloop()
