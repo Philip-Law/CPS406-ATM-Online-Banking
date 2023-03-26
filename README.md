@@ -1,6 +1,6 @@
 # CPS406-ATM-Online-Banking
 
-## About
+# About
 
 Placeholder
 
