@@ -70,11 +70,8 @@ class Selection(tk.Frame):
         #Depending on the card that is selected, use that ATMCards information and move to next screen
         def on_treeview_select(event):
             literal_list = tv.item(tv.focus())["values"]
-            print(literal_list)
             card = self.controller.sys_controller.find_card(literal_list[0], literal_list[1], str(literal_list[2]))
             self.controller.set_card(self.controller.sys_controller.find_card(literal_list[0], literal_list[1], str(literal_list[2])))
-            print(self.controller.shared_data['Card'])
-            print(card)
             self.controller.show_frame('InsertCard')
 
         tv.bind("<<TreeviewSelect>>", on_treeview_select)
@@ -125,8 +122,6 @@ class EnterPIN(tk.Frame):
         #Header/Screen Setup
         tk.Frame.__init__(self, parent, bg='#f0f0f0')
         self.controller = controller
-        
-        print(self.controller.shared_data['Card'])
 
         self.controller.title('Maze Bank')
         self.controller.state('zoomed')
@@ -280,7 +275,6 @@ class ServiceMenu(tk.Frame):
         card = self.controller.shared_data['Card']
         account = self.controller.shared_data['Account'].get()
         if card is not None and account in ['Chequing', 'Savings']:
-            print(account)
             # Update the text of the left and right canvas text widgets
             self.canvas.itemconfigure(self.left_text, text=card.get_user().get_name())
             self.canvas.itemconfigure(self.right_text, text=f"\t${card.get_user().get_account(account).get_balance()}")
@@ -458,7 +452,6 @@ class Approval(tk.Frame):
 
     def update(self):
         card = self.controller.shared_data['Card']
-        print(f"Here is Approval atm card: {card}")
         account = self.controller.shared_data['Account'].get()
         transaction_amount = card.get_user().get_account(account).get_transaction_history()[-1].get_amount()
         transaction_type = card.get_user().get_account(account).get_transaction_history()[-1].get_action_type()
