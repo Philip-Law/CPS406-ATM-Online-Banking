@@ -2,25 +2,30 @@ import tkinter as tk
 import time
 from tkinter import *
 from tkinter import ttk
+from ATMSystemController import ATMSystemController
+from ATMCard import ATMCard
+from User import User
 
 current_balance = 1000
 
-approval_wait = False
+sys_controller = ATMSystemController()
 
 class SampleApp(tk.Tk):
-
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
 
-        self.shared_data = {'Balance':tk.IntVar()}
+        self.shared_data = {'Card': None, 'Account': tk.StringVar(value='None'), 'Balance':tk.IntVar()}
+        self.sys_controller = ATMSystemController()
+
 
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand=True)
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
+        
 
         self.frames = {}
-        for F in (Selection, InsertCard, AccountMenu, EnterPIN, ServiceMenu, Withdraw, Deposit, Approval, Balance):
+        for F in (Selection, InsertCard, EnterPIN, AccountMenu, ServiceMenu, Withdraw, Deposit, Approval, Balance):
             page_name = F.__name__
             frame = F(parent=container, controller=self)
             self.frames[page_name] = frame
@@ -32,13 +37,21 @@ class SampleApp(tk.Tk):
     def show_frame(self, page_name):
         frame = self.frames[page_name]
         frame.tkraise()
+        if page_name in ['AccountMenu', 'ServiceMenu', 'Withdraw', 'Deposit', 'Approval', 'Balance']:
+            frame.update()
+    
+    def set_card(self, card):
+        self.shared_data['Card'] = card
+
+
 
 
 #Choose User Screen
 class Selection(tk.Frame):
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller ):
         tk.Frame.__init__(self, parent, bg='#f0f0f0')
         self.controller = controller
+        
 
         self.controller.title('Maze Bank')
         self.controller.state('zoomed')
@@ -52,11 +65,19 @@ class Selection(tk.Frame):
         frame = Frame(self)
         frame.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
 
-        tv = ttk.Treeview(frame, columns=(1,2,3), show="headings", height="5", selectmode="browse")
-        tv.pack()
-        def on_treeview_select(event):
-            self.controller.show_frame('InsertCard')
+        cards = self.controller.sys_controller.get_cards()
 
+        tv = ttk.Treeview(frame, columns=(1,2,3), show="headings", height=len(cards), selectmode="browse")
+        tv.pack()
+
+        def on_treeview_select(event):
+            literal_list = tv.item(tv.focus())["values"]
+            print(literal_list)
+            card = self.controller.sys_controller.find_card(literal_list[0], literal_list[1], str(literal_list[2]))
+            self.controller.set_card(self.controller.sys_controller.find_card(literal_list[0], literal_list[1], str(literal_list[2])))
+            print(self.controller.shared_data['Card'])
+            print(card)
+            self.controller.show_frame('InsertCard')
 
         tv.bind("<<TreeviewSelect>>", on_treeview_select)
 
@@ -64,31 +85,32 @@ class Selection(tk.Frame):
         tv.heading(2, text="CARD NUMBER")
         tv.heading(3, text="PIN")        
 
-        tv.insert("", "end", values=("John Doe", "123123123", "123"))
-        tv.insert("", "end", values=("Jane Doe", "456456456", "456"))
-        tv.insert("", "end", values=("Place Holder", "Place Holder", "Place Holder"))
-        tv.insert("", "end", values=("Place Holder", "Place Holder", "Place Holder"))
-        tv.insert("", "end", values=("Place Holder", "Place Holder", "Place Holder"))
+        for card in cards:
+            tv.insert("", "end", values=(card.get_user().get_name(), card.get_card_number(), card.get_PIN()))
+
 
 
 
 #Insert Card Screen
 class InsertCard(tk.Frame):
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller ):
         tk.Frame.__init__(self, parent, bg='#f0f0f0')
         self.controller = controller
+
 
         self.controller.title('Maze Bank')
         self.controller.state('zoomed')
 
         img = tk.PhotoImage(file="Logo.png")
-    
+
         mazebank_label = tk.Label(self, image=img)
         mazebank_label.image = img
         mazebank_label.pack(pady=25)
         
         CClabel = tk.Label(self, text="Click the Card to Insert", bg='#f0f0f0', font=('Calibri', 25))
         CClabel.place(relx=0.5, rely=0.35, anchor="center")
+
+        self.controller.set_card(self.controller.shared_data['Card'])
 
         CC = tk.PhotoImage(file="CC.png")
         CCButton = tk.Button(self, image=CC, borderwidth=0, command=lambda: [self.controller.show_frame('EnterPIN')])
@@ -98,10 +120,11 @@ class InsertCard(tk.Frame):
 
 #Enter PIN Screen
 class EnterPIN(tk.Frame):
-
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent,bg='#f0f0f0')
+    def __init__(self, parent, controller ):
+        tk.Frame.__init__(self, parent, bg='#f0f0f0')
         self.controller = controller
+        
+        print(self.controller.shared_data['Card'])
 
         self.controller.title('Maze Bank')
         self.controller.state('zoomed')
@@ -128,14 +151,15 @@ class EnterPIN(tk.Frame):
             
         enter_PIN.bind('<FocusIn>',handle_focus_in)
 
+
         def check_password():
-           if PIN.get() == '123':
-               PIN.set('')
-               PIN_wrong['text']=''
-               controller.show_frame('AccountMenu')
-           else:
-               PIN_wrong['text']='Incorrect Password'
-                
+            if PIN.get() == self.controller.shared_data['Card'].get_PIN():
+                PIN.set('')
+                PIN_wrong['text']=''
+                self.controller.show_frame('AccountMenu')
+            else:
+                PIN_wrong['text']='Incorrect Password'
+        
         enter = tk.Button(self,text='Enter',command=check_password,relief='raised',borderwidth=1,width=30,height=3, bg='#da0000', fg='white')
         enter.pack(pady=10)
 
@@ -146,24 +170,25 @@ class EnterPIN(tk.Frame):
         bottom_frame = tk.Frame(self,relief='raised',borderwidth=3)
         bottom_frame.pack(fill='x',side='bottom')
 
-        def tick():
-            current_time = time.strftime('%I:%M %p').lstrip('0').replace(' 0',' ')
-            time_label.config(text=current_time)
-            time_label.after(200,tick)
+        # def tick():
+        #     current_time = time.strftime('%I:%M %p').lstrip('0').replace(' 0',' ')
+        #     time_label.config(text=current_time)
+        #     time_label.after(200,tick)
             
-        time_label = tk.Label(bottom_frame,font=('calibri',12))
-        time_label.pack(side='right')
+        # time_label = tk.Label(bottom_frame,font=('calibri',12))
+        # time_label.pack(side='right')
 
-        tick()
-        
+        # tick()
+
 
 #Choose Account Screen
 class AccountMenu(tk.Frame):
-
     def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent, bg='#e8e8e8')
 
-        tk.Frame.__init__(self, parent,bg='#e8e8e8')
+
         self.controller = controller
+        print(f"Account Menu: {self.controller.shared_data['Card']}")
 
         self.controller.title('Maze Bank')
         self.controller.state('zoomed')
@@ -177,21 +202,29 @@ class AccountMenu(tk.Frame):
         spacer = tk.Label(self,height=2,bg='#e8e8e8')
         spacer.pack()
 
-        canvas = tk.Canvas(self, width=1400, height=50, bg='#da0000',highlightbackground='#e8e8e8')
-        canvas.create_text(700, 25, text="Choose an account.", justify="center", fill='white', font=('calibri',18))
-        canvas.create_text(100, 25, text="NAME HERE", justify="left", fill='white', font=('calibri',18))
-        canvas.create_text(1300, 25, text="BALANCE HERE", justify="right", fill='white', font=('calibri',18))
-        canvas.pack()
+        self.canvas = tk.Canvas(self, width=1400, height=50, bg='#da0000',highlightbackground='#e8e8e8')
+        self.canvas.create_text(700, 25, text="Choose an account.", justify="center", fill='white', font=('calibri',18))
+        self.left_text = self.canvas.create_text(100, 25, text="", justify="left", fill='white', font=('calibri',18))
+        self.right_text = self.canvas.create_text(1300, 25, text="", justify="right", fill='white', font=('calibri',18))
+        self.canvas.pack()
 
         spacer = tk.Label(self,height=3,bg='#e8e8e8')
         spacer.pack()
 
+        def do_chequing():
+            controller.shared_data['Account'].set('Chequing')
+            controller.show_frame('ServiceMenu')
 
-            
-        chequing_account_button = tk.Button(self,text='Chequing',command=lambda: controller.show_frame('ServiceMenu'),relief='raised',borderwidth=1,width=60,height=3, bg='#da0000', fg='white')
+
+        def do_savings():
+            controller.shared_data['Account'].set('Savings')
+            controller.show_frame('ServiceMenu')
+
+
+        chequing_account_button = tk.Button(self,text='Chequing',command=do_chequing,relief='raised',borderwidth=1,width=60,height=3, bg='#da0000', fg='white')
         chequing_account_button.pack(pady=10)
 
-        savings_account_button = tk.Button(self,text='Savings',command=lambda: controller.show_frame('ServiceMenu'),relief='raised',borderwidth=1,width=60,height=3, bg='#da0000', fg='white')
+        savings_account_button = tk.Button(self,text='Savings',command=do_savings,relief='raised',borderwidth=1,width=60,height=3, bg='#da0000', fg='white')
         savings_account_button.pack(pady=10)
     
         exit_button = tk.Button(self,text='Exit',command=lambda: controller.show_frame('Selection'),relief='raised',borderwidth=1,width=60,height=3, bg='#da0000', fg='white')
@@ -200,24 +233,30 @@ class AccountMenu(tk.Frame):
         bottom_frame = tk.Frame(self,relief='raised',borderwidth=3)
         bottom_frame.pack(fill='x',side='bottom')
 
-        def tick():
-            current_time = time.strftime('%I:%M %p').lstrip('0').replace(' 0',' ')
-            time_label.config(text=current_time)
-            time_label.after(200,tick)
+        # def tick():
+        #     current_time = time.strftime('%I:%M %p').lstrip('0').replace(' 0',' ')
+        #     time_label.config(text=current_time)
+        #     time_label.after(200,tick)
             
-        time_label = tk.Label(bottom_frame,font=('calibri',12))
-        time_label.pack(side='right')
+        # time_label = tk.Label(bottom_frame,font=('calibri',12))
+        # time_label.pack(side='right')
 
-        tick()
-
+        # tick()
+    def update(self):
+        card = self.controller.shared_data['Card']
+        if card is not None:
+            # Update the text of the left and right canvas text widgets
+            self.canvas.itemconfigure(self.left_text, text=f"\tCard #: {card.get_card_number()}")
 
 #Choose Service Screen
 class ServiceMenu(tk.Frame):
-
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent,bg='#e8e8e8')
+        tk.Frame.__init__(self, parent, bg='#e8e8e8')
         self.controller = controller
-   
+
+        print(f"Service Menu: {self.controller.shared_data['Card']}")
+        
+
         self.controller.title('Maze Bank')
         self.controller.state('zoomed')
 
@@ -230,15 +269,15 @@ class ServiceMenu(tk.Frame):
         spacer = tk.Label(self,height=2,bg='#e8e8e8')
         spacer.pack()
 
-        canvas = tk.Canvas(self, width=1400, height=50, bg='#da0000',highlightbackground='#e8e8e8')
-        canvas.create_text(700, 25, text="Choose a service.", justify="center", fill='white', font=('calibri',18))
-        canvas.create_text(100, 25, text="NAME HERE", justify="left", fill='white', font=('calibri',18))
-        canvas.create_text(1300, 25, text="BALANCE HERE", justify="right", fill='white', font=('calibri',18)) 
-        canvas.pack()
+
+        self.canvas = tk.Canvas(self, width=1400, height=50, bg='#da0000',highlightbackground='#e8e8e8')
+        self.canvas.create_text(700, 25, text="Choose an account.", justify="center", fill='white', font=('calibri',18))
+        self.left_text = self.canvas.create_text(100, 25, text="", justify="left", fill='white', font=('calibri',18))
+        self.right_text = self.canvas.create_text(1300, 25, text="", justify="right", fill='white', font=('calibri',18))
+        self.canvas.pack()
 
         spacer = tk.Label(self,height=3,bg='#e8e8e8')
         spacer.pack()
-
 
         withdraw_button = tk.Button(self,text='Withdraw',command=lambda: controller.show_frame('Withdraw'),relief='raised',borderwidth=1,width=60,height=3, bg='#da0000', fg='white')
         withdraw_button.pack(pady=10)
@@ -255,156 +294,171 @@ class ServiceMenu(tk.Frame):
         bottom_frame = tk.Frame(self,relief='raised',borderwidth=3)
         bottom_frame.pack(fill='x',side='bottom')
 
-        def tick():
-            current_time = time.strftime('%I:%M %p').lstrip('0').replace(' 0',' ')
-            time_label.config(text=current_time)
-            time_label.after(200,tick)
+        # def tick():
+        #     current_time = time.strftime('%I:%M %p').lstrip('0').replace(' 0',' ')
+        #     time_label.config(text=current_time)
+        #     time_label.after(200,tick)
             
-        time_label = tk.Label(bottom_frame,font=('calibri',12))
-        time_label.pack(side='right')
+        # time_label = tk.Label(bottom_frame,font=('calibri',12))
+        # time_label.pack(side='right')
 
-        tick()
+        # tick()
+    def update(self):
+        card = self.controller.shared_data['Card']
+        account = self.controller.shared_data['Account'].get()
+        if card is not None and account in ['Chequing', 'Savings']:
+            print(account)
+            # Update the text of the left and right canvas text widgets
+            self.canvas.itemconfigure(self.left_text, text=card.get_user().get_name())
+            self.canvas.itemconfigure(self.right_text, text=f"\t${card.get_user().get_account(account).get_balance()}")
 
 
 #Withdraw Screen
 class Withdraw(tk.Frame):
-    
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent,bg='#e8e8e8')
+        tk.Frame.__init__(self, parent, bg='#e8e8e8')
         self.controller = controller
 
         self.controller.title('Maze Bank')
         self.controller.state('zoomed')
 
         img = tk.PhotoImage(file="Logo2.png")
-    
-        mazebank_label = tk.Label(self,image=img,bg='#e8e8e8')
+
+        mazebank_label = tk.Label(self, image=img, bg='#e8e8e8')
         mazebank_label.image = img
         mazebank_label.pack(pady=25)
-        
-        spacer = tk.Label(self,height=2,bg='#e8e8e8')
+
+        spacer = tk.Label(self, height=2, bg='#e8e8e8')
         spacer.pack()
 
-        canvas = tk.Canvas(self, width=1400, height=50, bg='#da0000',highlightbackground='#e8e8e8')
-        canvas.create_text(700, 25, text="Select the amount you wish to withdraw from this account.", justify="center", fill='white', font=('calibri',18))
-        canvas.create_text(100, 25, text="NAME HERE", justify="left", fill='white', font=('calibri',18))
-        canvas.create_text(1300, 25, text="BALANCE HERE", justify="right", fill='white', font=('calibri',18))
-        canvas.pack()
+        self.canvas = tk.Canvas(self, width=1400, height=50, bg='#da0000', highlightbackground='#e8e8e8')
+        self.middle_text = self.canvas.create_text(700, 25, text="Select the amount you wish to withdraw from this account.", justify="center", fill='white', font=('calibri', 18))
+        self.left_text = self.canvas.create_text(100, 25, text="NAME HERE", justify="left", fill='white', font=('calibri', 18))
+        self.right_text = self.canvas.create_text(1300, 25, text="BALANCE HERE", justify="right", fill='white', font=('calibri', 18))
+        self.canvas.pack()
 
-        spacer = tk.Label(self,height=3,bg='#e8e8e8')
+        spacer = tk.Label(self, height=3, bg='#e8e8e8')
         spacer.pack()
-            
+
         cash = tk.StringVar()
-        other_amount_entry = tk.Entry(self, textvariable=cash,width=59,justify='center')
+        other_amount_entry = tk.Entry(self, textvariable=cash, width=59, justify='center')
         other_amount_entry.pack(pady=10)
 
         other_amount_entry.pack(pady=10)
 
-
-        def other_amount(_):
-            global current_balance
-
-            if current_balance < int(cash.get()):
-                canvas = tk.Canvas(self, width=200, height=100, bg='#da0000',highlightbackground='#e8e8e8')
-                canvas.create_text(100, 50, text="Insufficient Funds", justify="center", fill='white', font=('calibri',18))
-                canvas.pack(side='bottom')
-                self.after(2000, canvas.pack_forget)
-
-            else:
-                current_balance -= int(cash.get())
-                controller.shared_data['Balance'].set(current_balance)
+        def other_amount():
+            amount = int(cash.get())
+            card = self.controller.shared_data['Card']
+            account = self.controller.shared_data['Account'].get()
+            check = True
+            if card is not None and account in ['Chequing', 'Savings']:
+                try:
+                    self.controller.sys_controller.withdraw_amount(account, card, amount)
+                except ValueError:
+                    print("printed in catch")
+                    check = False
+                    canvas = tk.Canvas(self, width=200, height=100, bg='#da0000', highlightbackground='#e8e8e8')
+                    canvas.create_text(100, 50, text="Invalid Amount", justify="center", fill='white', font=('calibri', 18))
+                    canvas.pack(side='bottom')
+                    self.after(2000, canvas.pack_forget)
+            if(check):
                 cash.set('')
-                controller.show_frame('Approval')
-            
+                self.controller.show_frame('Approval')
 
-        enter = tk.Button(self, text='Enter', command=lambda: other_amount(None), relief='raised', borderwidth=1, width=60, height=3, bg='#da0000', fg='white')
+        enter = tk.Button(self, text='Enter', command=other_amount, relief='raised', borderwidth=1, width=60, height=3, bg='#da0000', fg='white')
         enter.pack(pady=10)
 
         back_button = tk.Button(self, text='Back', command=lambda: controller.show_frame('ServiceMenu'), relief='raised', borderwidth=1, width=60, height=3, bg='#da0000', fg='white')
         back_button.pack(pady=10)
 
+        bottom_frame = tk.Frame(self, relief='raised', borderwidth=3)
+        bottom_frame.pack(fill='x', side='bottom')
 
-        bottom_frame = tk.Frame(self,relief='raised',borderwidth=3)
-        bottom_frame.pack(fill='x',side='bottom')
+    def update(self):
+        card = self.controller.shared_data['Card']
+        account = self.controller.shared_data['Account'].get()
+        if card is not None and account in ['Chequing', 'Savings']:
+            self.canvas.itemconfigure(self.left_text, text=card.get_user().get_name())
+            self.canvas.itemconfigure(self.middle_text, text=f"Select the amount you wish to withdraw from {account} account.")
+            self.canvas.itemconfigure(self.right_text, text=f"\t${card.get_user().get_account(account).get_balance()}")
 
-        def tick():
-            current_time = time.strftime('%I:%M %p').lstrip('0').replace(' 0',' ')
-            time_label.config(text=current_time)
-            time_label.after(200,tick)
-            
-        time_label = tk.Label(bottom_frame,font=('calibri',12))
-        time_label.pack(side='right')
-
-        tick()
-   
-
-#Deposit Screen
+# Deposit Screen
 class Deposit(tk.Frame):
-    
     def __init__(self, parent, controller):
-        global current_balance
-
-        tk.Frame.__init__(self, parent,bg='#e8e8e8')
+        tk.Frame.__init__(self, parent, bg='#e8e8e8')
         self.controller = controller
-   
+
         self.controller.title('Maze Bank')
         self.controller.state('zoomed')
 
         img = tk.PhotoImage(file="Logo2.png")
-    
-        mazebank_label = tk.Label(self,image=img,bg='#e8e8e8')
+
+        mazebank_label = tk.Label(self, image=img, bg='#e8e8e8')
         mazebank_label.image = img
         mazebank_label.pack(pady=25)
-        
-        spacer = tk.Label(self,height=2,bg='#e8e8e8')
+
+        spacer = tk.Label(self, height=2, bg='#e8e8e8')
         spacer.pack()
 
-        canvas = tk.Canvas(self, width=1400, height=50, bg='#da0000',highlightbackground='#e8e8e8')
-        canvas.create_text(700, 25, text="Select the amount you wish to deposit to this account.", justify="center", fill='white', font=('calibri',18))
-        canvas.create_text(100, 25, text="NAME HERE", justify="left", fill='white', font=('calibri',18))
-        canvas.create_text(1300, 25, text="BALANCE HERE", justify="right", fill='white', font=('calibri',18))
-        canvas.pack()
+        self.canvas = tk.Canvas(self, width=1400, height=50, bg='#da0000', highlightbackground='#e8e8e8')
+        self.middle_text = self.canvas.create_text(700, 25, text="Select the amount you wish to withdraw from this account.", justify="center", fill='white', font=('calibri', 18))
+        self.left_text = self.canvas.create_text(100, 25, text="NAME HERE", justify="left", fill='white', font=('calibri', 18))
+        self.right_text = self.canvas.create_text(1300, 25, text="BALANCE HERE", justify="right", fill='white', font=('calibri', 18))
+        self.canvas.pack()
 
-        spacer = tk.Label(self,height=3,bg='#e8e8e8')
+        spacer = tk.Label(self, height=3, bg='#e8e8e8')
         spacer.pack()
 
         cash = tk.StringVar()
-        deposit_entry = tk.Entry(self,textvariable=cash,font=('calibri',12),width=22)
-        deposit_entry.pack(ipady=7)
+        other_amount_entry = tk.Entry(self, textvariable=cash, width=59, justify='center')
+        other_amount_entry.pack(pady=10)
 
-        def deposit_cash():
-            global current_balance
-            current_balance += int(cash.get())
-            controller.shared_data['Balance'].set(current_balance) 
-            controller.show_frame('Approval')
-            cash.set('')
-        enter = tk.Button(self,text='Enter',command=deposit_cash,relief='raised',borderwidth=1,width=60,height=3, bg='#da0000', fg='white')
+        other_amount_entry.pack(pady=10)
+
+        def other_amount():
+            amount = int(cash.get())
+            card = self.controller.shared_data['Card']
+            account = self.controller.shared_data['Account'].get()
+            check = True
+            if card is not None and account in ['Chequing', 'Savings']:
+                try:
+                    self.controller.sys_controller.deposit_amount(account, card, amount)
+                except ValueError:
+                    print("printed in catch")
+                    check = False
+                    canvas = tk.Canvas(self, width=200, height=100, bg='#da0000', highlightbackground='#e8e8e8')
+                    canvas.create_text(100, 50, text="Invalid Amount", justify="center", fill='white', font=('calibri', 18))
+                    canvas.pack(side='bottom')
+                    self.after(2000, canvas.pack_forget)
+            if(check):
+                cash.set('')
+                self.controller.show_frame('Approval')
+
+        enter = tk.Button(self, text='Enter', command=other_amount, relief='raised', borderwidth=1, width=60, height=3, bg='#da0000', fg='white')
         enter.pack(pady=10)
 
         back_button = tk.Button(self, text='Back', command=lambda: controller.show_frame('ServiceMenu'), relief='raised', borderwidth=1, width=60, height=3, bg='#da0000', fg='white')
         back_button.pack(pady=10)
 
-        bottom_frame = tk.Frame(self,relief='raised',borderwidth=3)
-        bottom_frame.pack(fill='x',side='bottom')
-        def tick():
-            current_time = time.strftime('%I:%M %p').lstrip('0').replace(' 0',' ')
-            time_label.config(text=current_time)
-            time_label.after(200,tick)
-            
-        time_label = tk.Label(bottom_frame,font=('calibri',12))
-        time_label.pack(side='right')
+        bottom_frame = tk.Frame(self, relief='raised', borderwidth=3)
+        bottom_frame.pack(fill='x', side='bottom')
 
-        tick()
+    def update(self):
+        card = self.controller.shared_data['Card']
+        account = self.controller.shared_data['Account'].get()
+        if card is not None and account in ['Chequing', 'Savings']:
+            self.canvas.itemconfigure(self.left_text, text=card.get_user().get_name())
+            self.canvas.itemconfigure(self.middle_text, text=f"Select the amount you wish to withdraw from {account} account.")
+            self.canvas.itemconfigure(self.right_text, text=f"\t${card.get_user().get_account(account).get_balance()}")
 
-
+# Approval Screen
 class Approval(tk.Frame):
-
     def __init__(self, parent, controller):
-        global current_balance
 
-        tk.Frame.__init__(self, parent,bg='#e8e8e8')
+        tk.Frame.__init__(self, parent,bg='#e8e8e8')        
         self.controller = controller
-   
+
+
         self.controller.title('Maze Bank')
         self.controller.state('zoomed')
 
@@ -417,28 +471,42 @@ class Approval(tk.Frame):
         spacer = tk.Label(self,height=2,bg='#e8e8e8')
         spacer.pack()
 
-        canvas = tk.Canvas(self, width=200, height=50, bg='#da0000',highlightbackground='#e8e8e8')
-        canvas.create_text(100, 25, text="TRANSACTION ID", justify="center", fill='white', font=('calibri',18))
-        canvas.pack(side='top', pady=10)
+    def destroy_widgets(self, cont_button):
+        self.canvas.destroy()
+        self.canvas2.destroy()
+        self.canvas3.destroy()
+        cont_button.destroy()
 
-        canvas2 = tk.Canvas(self, width=200, height=50, bg='#da0000',highlightbackground='#e8e8e8')
-        canvas2.create_text(100, 25, text="WITHDRAW/DEPOSIT", justify="center", fill='white', font=('calibri',18))
-        canvas2.pack(side='top', pady=10)
+    def update(self):
+        card = self.controller.shared_data['Card']
+        print(f"Here is Approval atm card: {card}")
+        account = self.controller.shared_data['Account'].get()
+        transaction_type = card.get_user().get_account(account).get_transaction_history()[-1].get_action_type()
+        transaction_id = card.get_user().get_account(account).get_transaction_history()[-1].get_id()
 
-        balance_label = tk.Label(self,textvariable=controller.shared_data['Balance'],font=('calibri',25),fg='white',bg='#da0000',anchor='center')
-        balance_label.pack(side='top', pady=20)
+        self.canvas = tk.Canvas(self, width=300, height=50, bg='#da0000',highlightbackground='#e8e8e8')
+        self.transaction_id = self.canvas.create_text(150, 25, text=f"Transaction ID: {transaction_id}", justify="center", fill='white', font=('calibri',18), anchor="center")
+        self.transaction_id = self.canvas.pack(side='top', pady=10, anchor='center')
+        
 
-        cont_button = tk.Button(self, text='Continue', command=lambda: controller.show_frame('ServiceMenu'), relief='raised', borderwidth=1, width=60, height=3, bg='#da0000', fg='white')
+        self.canvas2 = tk.Canvas(self, width=200, height=50, bg='#da0000',highlightbackground='#e8e8e8')
+        self.transction_type = self.canvas2.create_text(100, 25, text=transaction_type, justify="center", fill='white', font=('calibri',18))
+        self.transction_type = self.canvas2.pack(side='top', pady=10)
+
+
+        self.canvas3 = tk.Canvas(self, width=200, height=50, bg='#da0000',highlightbackground='#e8e8e8')
+        self.transction_type = self.canvas3.create_text(100, 25, text=f"${card.get_user().get_account(account).get_balance()}", justify="center", fill='white', font=('calibri',18))
+        self.transction_type = self.canvas3.pack(side='top', pady=10)
+
+        cont_button = tk.Button(self, text='Continue', command=lambda: [self.controller.show_frame('ServiceMenu'), self.destroy_widgets(cont_button)], relief='raised', borderwidth=1, width=60, height=3, bg='#da0000', fg='white')
         cont_button.pack(pady=10)
 
-
-#View Balance Screen
+# View Balance Screen
 class Balance(tk.Frame):
-    
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent,bg='#e8e8e8')
         self.controller = controller
-   
+        
         self.controller.title('Maze Bank')
         self.controller.state('zoomed')
 
@@ -468,7 +536,7 @@ class Balance(tk.Frame):
 
         tv = ttk.Treeview(frame, columns=(1,2,3,4), show="headings", height="5")
         tv.pack()
- 
+    
 
         tv.heading(1, text="TRANSACTION TYPE")
         tv.heading(2, text="TRANSACTION ID")
@@ -492,15 +560,13 @@ class Balance(tk.Frame):
         bottom_frame = tk.Frame(self,relief='raised',borderwidth=3)
         bottom_frame.pack(fill='x',side='bottom')
 
-        def tick():
-            current_time = time.strftime('%I:%M %p').lstrip('0').replace(' 0',' ')
-            time_label.config(text=current_time)
-            time_label.after(200,tick)
-            
-        time_label = tk.Label(bottom_frame,font=('calibri',12))
-        time_label.pack(side='right')
-
-        tick()
+    def update(self):
+        card = self.controller.shared_data['Card']
+        account_type = self.controller.shared_data['Account']
+        transaction_history = card.get_user().get_account(account_type).get_transaction_history()
+        if card is not None:
+            for transaction in transaction_history:
+                pass
 
 
 if __name__ == "__main__":

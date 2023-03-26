@@ -5,8 +5,11 @@ class User:
         self.name = name
         self.accounts = [Account(chequing_balance), Account(savings_balance)]
 
-    def get_chequing_account(self):
-        return self.accounts[0]
-    
-    def get_savings_account(self):
-        return self.accounts[1]
+    def get_name(self):
+        return self.name
+
+    def get_account(self, account_type: str) -> Account:
+        if account_type == 'Chequing':
+            return self.accounts[0]
+        elif account_type == 'Savings':
+            return self.accounts[1]
