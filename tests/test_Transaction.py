@@ -2,6 +2,7 @@ from Transaction import Transaction
 import pytest
 
 class TestTransaction:
+    # Defines an instance of Transaction which will be used in each test
     @pytest.fixture
     def withdrawAction(self):
         return Transaction("401", "2023-03-23", "Withdraw", 500)

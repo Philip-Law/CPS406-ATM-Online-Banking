@@ -1,12 +1,14 @@
 from ATMCard import ATMCard
 from User import User
+
 from unittest.mock import MagicMock
 import pytest
 
 class TestATMCard:
+    # Defines an instance of ATMCard which will be used in each test
     @pytest.fixture
     def card(self):
-        user = User("John", 500, 700)
+        user = User("John Doe", 500, 700)
         return ATMCard("1234", user)
 
 
@@ -22,6 +24,7 @@ class TestATMCard:
 
 
     def test_get_user(self, card):
-        newUser = User("John", 500, 700)
+        # Tests if the ATMCard returns the expected User
+        newUser = User("John Doe", 500, 700)
         assert newUser.get_account("Chequing").get_balance() == card.get_user().get_account("Chequing").get_balance()
         assert newUser.get_account("Savings").get_balance() == card.get_user().get_account("Savings").get_balance()

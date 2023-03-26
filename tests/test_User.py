@@ -3,6 +3,7 @@ from Account import Account
 import pytest
 
 class TestUser:
+    # Defines an instance of User which will be used in each test
     @pytest.fixture
     def user(self):
         return User("Justin", 500, 700)

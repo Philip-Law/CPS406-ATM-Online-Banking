@@ -12,9 +12,10 @@ class TestAccount:
 
 
     def test_deposit(self):
+        # Tests deposit 2 times to make sure the balance is updated properly
         acc = Account(5000)
-        acc.deposit(1000)
 
+        acc.deposit(1000)
         assert acc.get_balance() == 6000
 
         acc.deposit(100)
@@ -22,16 +23,18 @@ class TestAccount:
 
 
     def test_withdraw(self):
+        # Tests withdraw 2 times to make sure the balance is updated properly
         acc = Account(100)
+
         acc.withdraw(90)
         assert acc.get_balance() == 10
-
 
         acc.withdraw(10)
         assert acc.get_balance() == 0
 
 
     def test_withdraw_error(self):
+        # Tests when an amount more than balance is withdrawn
         acc = Account(0)
 
         with pytest.raises(ValueError):
@@ -73,6 +76,7 @@ class TestAccount:
     def test_add_transaction(self):
         acc = Account(100)
 
+        # Adds a Transaction to an Account and checks if it's within its history
         newAction = Transaction("10000004", date.today(), "Deposit", 100)
 
         acc.add_transaction(newAction)
