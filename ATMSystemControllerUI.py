@@ -85,11 +85,11 @@ class Selection(tk.Frame):
 
 
 
-#Insert Card Screen
+# Insert Card Screen
 class InsertCard(tk.Frame):
     def __init__(self, parent, controller ):
 
-        #Header/Screen Setup
+        # Header/Screen Setup
         tk.Frame.__init__(self, parent, bg='#f0f0f0')
         self.controller = controller
 
@@ -118,11 +118,11 @@ class InsertCard(tk.Frame):
         back_button.pack(pady=10)
 
 
-#Enter PIN Screen
+# Enter PIN Screen
 class EnterPIN(tk.Frame):
     def __init__(self, parent, controller ):
 
-        #Header/Screen Setup
+        # Header/Screen Setup
         tk.Frame.__init__(self, parent, bg='#f0f0f0')
         self.controller = controller
 
@@ -138,7 +138,7 @@ class EnterPIN(tk.Frame):
         spacer = tk.Label(self,height=4,bg='#f0f0f0')
         spacer.pack()
 
-        #Creating label to prompt user to enter their PIN below
+        # Creating label to prompt user to enter their PIN below
         PIN_label = tk.Label(self,text='Enter Your PIN',font=('calibri',20),bg='#f0f0f0',fg='black')
         PIN_label.pack(pady=10)
 
@@ -176,11 +176,11 @@ class EnterPIN(tk.Frame):
 
 
 
-#Choose Account Screen
+# Choose Account Screen
 class AccountMenu(tk.Frame):
     def __init__(self, parent, controller):
 
-        #Header/Screen Setup
+        # Header/Screen Setup
         tk.Frame.__init__(self, parent, bg='#e8e8e8')
         self.controller = controller
 
@@ -196,7 +196,7 @@ class AccountMenu(tk.Frame):
         spacer = tk.Label(self,height=2,bg='#e8e8e8')
         spacer.pack()
 
-        #Creates label that prompts users to choose an account (chequing/savings)
+        # Creates label that prompts users to choose an account (chequing/savings)
         self.canvas = tk.Canvas(self, width=1400, height=50, bg='#da0000',highlightbackground='#e8e8e8')
         self.canvas.create_text(700, 25, text="Select an account.", justify="center", fill='white', font=('calibri',18))
         self.canvas.pack()
@@ -204,7 +204,7 @@ class AccountMenu(tk.Frame):
         spacer = tk.Label(self,height=3,bg='#e8e8e8')
         spacer.pack()
 
-        #Methods direct user to the respective account depending on what option is selected
+        # Methods direct user to the respective account depending on what option is selected
         def do_chequing():
             controller.shared_data['Account'].set('Chequing')
             controller.show_frame('ServiceMenu')
@@ -213,11 +213,11 @@ class AccountMenu(tk.Frame):
             controller.shared_data['Account'].set('Savings')
             controller.show_frame('ServiceMenu')
 
-        #If user selects chequing button, redirect to service menu of chequing account
+        # If user selects chequing button, redirect to service menu of chequing account
         chequing_account_button = tk.Button(self,text='Chequing',command=do_chequing,relief='raised',borderwidth=1,width=35,height=1, bg='#da0000', fg='white', font=('calibri', 18))
         chequing_account_button.pack(pady=10)
 
-        #If user selects savings button, redirect to service menu of savings account
+        # If user selects savings button, redirect to service menu of savings account
         savings_account_button = tk.Button(self,text='Savings',command=do_savings,relief='raised',borderwidth=1,width=35,height=1, bg='#da0000', fg='white', font=('calibri', 18))
         savings_account_button.pack(pady=10)
     
@@ -229,11 +229,11 @@ class AccountMenu(tk.Frame):
 
 
 
-#Choose Service Screen
+# Choose Service Screen
 class ServiceMenu(tk.Frame):
     def __init__(self, parent, controller):
         
-        #Header/Screen Setup
+        # Header/Screen Setup
         tk.Frame.__init__(self, parent, bg='#e8e8e8')
         self.controller = controller
         
@@ -249,7 +249,7 @@ class ServiceMenu(tk.Frame):
         spacer = tk.Label(self,height=2,bg='#e8e8e8')
         spacer.pack()
 
-        #Creates label that prompts users to choose a service (withdraw,deposit,transaction log)
+        # Creates label that prompts users to choose a service (withdraw,deposit,transaction log)
         self.canvas = tk.Canvas(self, width=1400, height=50, bg='#da0000',highlightbackground='#e8e8e8')
         self.canvas.create_text(700, 25, text="Select a service.", justify="center", fill='white', font=('calibri',18))
         self.left_text = self.canvas.create_text(100, 25, text="", justify="left", fill='white', font=('calibri',18))
@@ -259,15 +259,15 @@ class ServiceMenu(tk.Frame):
         spacer = tk.Label(self,height=3,bg='#e8e8e8')
         spacer.pack()
 
-        #If user selects withdraw then show user the withdraw screen
+        # If user selects withdraw then show user the withdraw screen
         withdraw_button = tk.Button(self,text='Withdraw',command=lambda: controller.show_frame('Withdraw'),relief='raised',borderwidth=1,width=35,height=1, bg='#da0000', fg='white', font=('calibri', 18))
         withdraw_button.pack(pady=10)
 
-        #If user selects deposit then show user the deposit screen
+        # If user selects deposit then show user the deposit screen
         deposit_button = tk.Button(self,text='Deposit',command=lambda: controller.show_frame('Deposit'),relief='raised',borderwidth=1,width=35,height=1, bg='#da0000', fg='white', font=('calibri', 18))
         deposit_button.pack(pady=10)
 
-        #If user selects transaction log then show user the transaction log screen
+        # If user selects transaction log then show user the transaction log screen
         transaction_log_button = tk.Button(self,text='Transaction Log',command=lambda: controller.show_frame('Balance'),relief='raised',borderwidth=1,width=35,height=1, bg='#da0000', fg='white', font=('calibri', 18))
         transaction_log_button.pack(pady=10)
 
@@ -286,11 +286,11 @@ class ServiceMenu(tk.Frame):
             self.canvas.itemconfigure(self.right_text, text=f"\t${card.get_user().get_account(account).get_balance()}")
 
 
-#Withdraw Screen
+# Withdraw Screen
 class Withdraw(tk.Frame):
     def __init__(self, parent, controller):
 
-        #Header/Screen Setup
+        # Header/Screen Setup
         tk.Frame.__init__(self, parent, bg='#e8e8e8')
         self.controller = controller
 
@@ -306,7 +306,7 @@ class Withdraw(tk.Frame):
         spacer = tk.Label(self, height=2, bg='#e8e8e8')
         spacer.pack()
 
-        #Prompts the user to enter a withdraw amount
+        # Prompts the user to enter a withdraw amount
         self.canvas = tk.Canvas(self, width=1400, height=50, bg='#da0000', highlightbackground='#e8e8e8')
         self.middle_text = self.canvas.create_text(700, 25, text="Enter the amount you wish to withdraw from this account.", justify="center", fill='white', font=('calibri', 18))
         self.left_text = self.canvas.create_text(100, 25, text="NAME HERE", justify="left", fill='white', font=('calibri', 18))
@@ -325,7 +325,7 @@ class Withdraw(tk.Frame):
             card = self.controller.shared_data['Card']
             account = self.controller.shared_data['Account'].get()
             check = True
-            #If card and account is valid, then withdraw the appropriate amount, else display invalid amount to the screen
+            # If card and account is valid, then withdraw the appropriate amount, else display invalid amount to the screen
             if card is not None and account in ['Chequing', 'Savings']:
                 try:
                     amount = int(cash.get())
@@ -377,7 +377,7 @@ class Deposit(tk.Frame):
         spacer = tk.Label(self, height=2, bg='#e8e8e8')
         spacer.pack()
 
-        #Prompts the user to enter a deposit amount
+        # Prompts the user to enter a deposit amount
         self.canvas = tk.Canvas(self, width=1400, height=50, bg='#da0000', highlightbackground='#e8e8e8')
         self.middle_text = self.canvas.create_text(700, 25, text="Enter the amount you wish to deposit to this account.", justify="center", fill='white', font=('calibri', 18))
         self.left_text = self.canvas.create_text(100, 25, text="NAME HERE", justify="left", fill='white', font=('calibri', 18))
@@ -396,7 +396,7 @@ class Deposit(tk.Frame):
             card = self.controller.shared_data['Card']
             account = self.controller.shared_data['Account'].get()
             check = True
-            #If card and account is valid, then deposit the appropriate amount, else display invalid amount to the screen
+            # If card and account is valid, then deposit the appropriate amount, else display invalid amount to the screen
             if card is not None and account in ['Chequing', 'Savings']:
                 try:
                     amount = int(cash.get())
@@ -432,7 +432,7 @@ class Deposit(tk.Frame):
 class Approval(tk.Frame):
     def __init__(self, parent, controller):
 
-        #Header/Screen Setup
+        # Header/Screen Setup
         tk.Frame.__init__(self, parent,bg='#e8e8e8')        
         self.controller = controller
 
@@ -448,7 +448,7 @@ class Approval(tk.Frame):
         spacer = tk.Label(self,height=2,bg='#e8e8e8')
         spacer.pack()
 
-    #Removes canvas when neccesary 
+    # Removes canvas when neccesary 
     def destroy_widgets(self, cont_button):
         self.canvas.destroy()
         self.canvas2.destroy()
@@ -462,7 +462,7 @@ class Approval(tk.Frame):
         transaction_type = card.get_user().get_account(account).get_transaction_history()[-1].get_action_type()
         transaction_id = card.get_user().get_account(account).get_transaction_history()[-1].get_id()
 
-        #Shows customer the transaction they just completed (displays Transaction ID, Transaction Type, and New Balance)
+        # Shows customer the transaction they just completed (displays Transaction ID, Transaction Type, and New Balance)
         self.canvas = tk.Canvas(self, width=300, height=50, bg='#da0000',highlightbackground='#e8e8e8')
         self.transaction_id = self.canvas.create_text(150, 25, text=f"Transaction ID: {transaction_id}", justify="center", fill='white', font=('calibri',18), anchor="center")
         self.transaction_id = self.canvas.pack(side='top', pady=10, anchor='center')
@@ -475,7 +475,7 @@ class Approval(tk.Frame):
         self.transction_type = self.canvas3.create_text(100, 25, text=f"${transaction_amount}", justify="center", fill='white', font=('calibri',18))
         self.transction_type = self.canvas3.pack(side='top', pady=10)
 
-        #customer can continue to make changes on their account if needed, when continue is clicked all widgets are destroyed and user gets redirected to servicemenu
+        # Customer can continue to make changes on their account if needed, when continue is clicked all widgets are destroyed and user gets redirected to servicemenu
         cont_button = tk.Button(self, text='Continue', command=lambda: [self.controller.show_frame('ServiceMenu'), self.destroy_widgets(cont_button)], relief='raised', borderwidth=1, width=35, height=1, bg='#da0000', fg='white', font=('calibri', 18))
         cont_button.pack(pady=7)
 
