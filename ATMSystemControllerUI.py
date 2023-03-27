@@ -41,11 +41,11 @@ class SampleApp(tk.Tk):
 
 
 
-#Choose User Screen
+# Choose User Screen
 class Selection(tk.Frame):
     def __init__(self, parent, controller ):
         
-        #Header/Screen Setup
+        # Header/Screen Setup
         tk.Frame.__init__(self, parent, bg='#f0f0f0')
         self.controller = controller
         
@@ -58,7 +58,7 @@ class Selection(tk.Frame):
         mazebank_label.image = img
         mazebank_label.pack(pady=25)
 
-        #Creating frame to display all cards (emulating different customers/users) (only used for demo and not within real program)
+        # Creating frame to display all cards (emulating different customers/users) (only used for demo and not within real program)
         frame = Frame(self)
         frame.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
 
