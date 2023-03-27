@@ -6,8 +6,6 @@ from ATMSystemController import ATMSystemController
 from ATMCard import ATMCard
 from User import User
 
-sys_controller = ATMSystemController()
-
 class SampleApp(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
