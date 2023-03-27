@@ -52,7 +52,7 @@ class Selection(tk.Frame):
         self.controller.title('Maze Bank')
         self.controller.state('zoomed')
 
-        img = tk.PhotoImage(file="Logo.png")
+        img = tk.PhotoImage(file="images/Logo.png")
     
         mazebank_label = tk.Label(self, image=img)
         mazebank_label.image = img
@@ -96,7 +96,7 @@ class InsertCard(tk.Frame):
         self.controller.title('Maze Bank')
         self.controller.state('zoomed')
 
-        img = tk.PhotoImage(file="Logo.png")
+        img = tk.PhotoImage(file="images/Logo.png")
 
         mazebank_label = tk.Label(self, image=img)  
         mazebank_label.image = img
@@ -108,7 +108,7 @@ class InsertCard(tk.Frame):
         
         self.controller.set_card(self.controller.shared_data['Card'])
 
-        CC = tk.PhotoImage(file="CC.png")
+        CC = tk.PhotoImage(file="images/CC.png")
         CC = CC.subsample(2)
         CCButton = tk.Button(self, image=CC, borderwidth=0, command=lambda: [self.controller.show_frame('EnterPIN')])
         CCButton.image = CC
@@ -129,7 +129,7 @@ class EnterPIN(tk.Frame):
         self.controller.title('Maze Bank')
         self.controller.state('zoomed')
 
-        img = tk.PhotoImage(file="Logo.png")
+        img = tk.PhotoImage(file="images/Logo.png")
     
         mazebank_label = tk.Label(self,image=img)
         mazebank_label.image = img
