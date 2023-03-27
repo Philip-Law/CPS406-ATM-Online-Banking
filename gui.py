@@ -52,7 +52,7 @@ class Selection(tk.Frame):
         self.controller.title('Maze Bank')
         self.controller.state('zoomed')
 
-        img = tk.PhotoImage(file="images/Logo.png")
+        img = tk.PhotoImage(file="Logo.png")
     
         mazebank_label = tk.Label(self, image=img)
         mazebank_label.image = img
@@ -96,7 +96,7 @@ class InsertCard(tk.Frame):
         self.controller.title('Maze Bank')
         self.controller.state('zoomed')
 
-        img = tk.PhotoImage(file="images/Logo.png")
+        img = tk.PhotoImage(file="Logo.png")
 
         mazebank_label = tk.Label(self, image=img)  
         mazebank_label.image = img
@@ -108,7 +108,7 @@ class InsertCard(tk.Frame):
         
         self.controller.set_card(self.controller.shared_data['Card'])
 
-        CC = tk.PhotoImage(file="images/CC.png")
+        CC = tk.PhotoImage(file="CC.png")
         CC = CC.subsample(2)
         CCButton = tk.Button(self, image=CC, borderwidth=0, command=lambda: [self.controller.show_frame('EnterPIN')])
         CCButton.image = CC
@@ -129,7 +129,7 @@ class EnterPIN(tk.Frame):
         self.controller.title('Maze Bank')
         self.controller.state('zoomed')
 
-        img = tk.PhotoImage(file="images/Logo.png")
+        img = tk.PhotoImage(file="Logo.png")
     
         mazebank_label = tk.Label(self,image=img)
         mazebank_label.image = img
@@ -162,8 +162,11 @@ class EnterPIN(tk.Frame):
             else:
                 PIN_wrong['text']='Incorrect Password'
         
-        enter = tk.Button(self,text='Enter',command=check_password,relief='raised',borderwidth=1,width=35,height=1, bg='#da0000', fg='white', font=('calibri', 18))
-        enter.pack(pady=10)
+        submit = tk.Button(self,text='Submit',command=check_password,relief='raised',borderwidth=1,width=35,height=1, bg='#da0000', fg='white', font=('calibri', 18))
+        submit.pack(pady=10)
+
+        back_button = tk.Button(self, text='Back', command=lambda: controller.show_frame('Selection'), relief='raised', borderwidth=1, width=35, height=1, bg='#da0000', fg='white', font=('calibri', 18))
+        back_button.pack(pady=10)
 
         PIN_wrong = tk.Label(self,font=('calibri',20),fg='black',bg='#f0f0f0',anchor='n')
         PIN_wrong.pack(fill='both',expand=True)
@@ -184,7 +187,7 @@ class AccountMenu(tk.Frame):
         self.controller.title('Maze Bank')
         self.controller.state('zoomed')
 
-        img = tk.PhotoImage(file="images/Logo2.png")
+        img = tk.PhotoImage(file="Logo2.png")
     
         mazebank_label = tk.Label(self,image=img,bg='#e8e8e8')
         mazebank_label.image = img
@@ -237,7 +240,7 @@ class ServiceMenu(tk.Frame):
         self.controller.title('Maze Bank')
         self.controller.state('zoomed')
 
-        img = tk.PhotoImage(file="images/Logo2.png")
+        img = tk.PhotoImage(file="Logo2.png")
     
         mazebank_label = tk.Label(self,image=img,bg='#e8e8e8')
         mazebank_label.image = img
@@ -294,7 +297,7 @@ class Withdraw(tk.Frame):
         self.controller.title('Maze Bank')
         self.controller.state('zoomed')
 
-        img = tk.PhotoImage(file="images/Logo2.png")
+        img = tk.PhotoImage(file="Logo2.png")
 
         mazebank_label = tk.Label(self, image=img, bg='#e8e8e8')
         mazebank_label.image = img
@@ -365,7 +368,7 @@ class Deposit(tk.Frame):
         self.controller.title('Maze Bank')
         self.controller.state('zoomed')
 
-        img = tk.PhotoImage(file="images/Logo2.png")
+        img = tk.PhotoImage(file="Logo2.png")
 
         mazebank_label = tk.Label(self, image=img, bg='#e8e8e8')
         mazebank_label.image = img
@@ -436,7 +439,7 @@ class Approval(tk.Frame):
         self.controller.title('Maze Bank')
         self.controller.state('zoomed')
 
-        img = tk.PhotoImage(file="images/Logo2.png")
+        img = tk.PhotoImage(file="Logo2.png")
     
         mazebank_label = tk.Label(self,image=img,bg='#e8e8e8')
         mazebank_label.image = img
@@ -485,7 +488,7 @@ class Balance(tk.Frame):
         self.controller.state('zoomed')
 
         # Create header widgets
-        img = tk.PhotoImage(file="images/Logo2.png")
+        img = tk.PhotoImage(file="Logo2.png")
         mazebank_label = tk.Label(self, image=img, bg='#e8e8e8')
         mazebank_label.image = img
         mazebank_label.pack(pady=25)
