@@ -7,7 +7,7 @@ This program uses Tkinter for its UI and includes functionality such as withdraw
 
 # Running
 
-To run the program, use the command ```python gui.py``` to run the UI file.
+To run the program, use the command ```python ATMSystemControllerUI.py``` to run the UI file.
 
 
 ## Testing
