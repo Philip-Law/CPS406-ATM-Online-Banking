@@ -7,8 +7,8 @@ import tkinter as tk
 class ATMSystemController:
     def __init__(self):
         # List of ATM cards
-        self.cards = [ATMCard("1234", User("Dixie Normous", 5000, 4000)), 
-        ATMCard("7682", User("Phuc Yu", 1000, 10)), ATMCard("1020", User("Sal Ami", 4200, 590)), 
+        self.cards = [ATMCard("1234", User("Kerry Oki", 5000, 4000)), 
+        ATMCard("7682", User("Joe Kerr", 1000, 10)), ATMCard("1020", User("Sal Ami", 4200, 590)), 
         ATMCard("3976", User("Yoshie Takeshita", 4080, 1080)), ATMCard("2396", User("Jack Daniels", 1998, 1875))]
         
     def get_cards(self):
