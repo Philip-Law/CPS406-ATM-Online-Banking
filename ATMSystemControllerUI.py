@@ -187,7 +187,7 @@ class AccountMenu(tk.Frame):
         self.controller.title('Maze Bank')
         self.controller.state('zoomed')
 
-        img = tk.PhotoImage(file="Logo2.png")
+        img = tk.PhotoImage(file="images/Logo2.png")
     
         mazebank_label = tk.Label(self,image=img,bg='#e8e8e8')
         mazebank_label.image = img
@@ -240,7 +240,7 @@ class ServiceMenu(tk.Frame):
         self.controller.title('Maze Bank')
         self.controller.state('zoomed')
 
-        img = tk.PhotoImage(file="Logo2.png")
+        img = tk.PhotoImage(file="images/Logo2.png")
     
         mazebank_label = tk.Label(self,image=img,bg='#e8e8e8')
         mazebank_label.image = img
@@ -297,7 +297,7 @@ class Withdraw(tk.Frame):
         self.controller.title('Maze Bank')
         self.controller.state('zoomed')
 
-        img = tk.PhotoImage(file="Logo2.png")
+        img = tk.PhotoImage(file="images/Logo2.png")
 
         mazebank_label = tk.Label(self, image=img, bg='#e8e8e8')
         mazebank_label.image = img
@@ -368,7 +368,7 @@ class Deposit(tk.Frame):
         self.controller.title('Maze Bank')
         self.controller.state('zoomed')
 
-        img = tk.PhotoImage(file="Logo2.png")
+        img = tk.PhotoImage(file="images/Logo2.png")
 
         mazebank_label = tk.Label(self, image=img, bg='#e8e8e8')
         mazebank_label.image = img
@@ -439,7 +439,7 @@ class Approval(tk.Frame):
         self.controller.title('Maze Bank')
         self.controller.state('zoomed')
 
-        img = tk.PhotoImage(file="Logo2.png")
+        img = tk.PhotoImage(file="images/Logo2.png")
     
         mazebank_label = tk.Label(self,image=img,bg='#e8e8e8')
         mazebank_label.image = img
@@ -488,7 +488,7 @@ class Balance(tk.Frame):
         self.controller.state('zoomed')
 
         # Create header widgets
-        img = tk.PhotoImage(file="Logo2.png")
+        img = tk.PhotoImage(file="images/Logo2.png")
         mazebank_label = tk.Label(self, image=img, bg='#e8e8e8')
         mazebank_label.image = img
         mazebank_label.pack(pady=25)
