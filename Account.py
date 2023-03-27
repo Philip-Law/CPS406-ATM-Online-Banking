@@ -6,19 +6,19 @@ class Account:
     # Starting transaction id
     transaction_id = 10000000
 
-    # Generate transaction id for every transaction made in account
     @classmethod
     def generate_transaction_id(cls):
+        # Generate transaction id for every transaction made in account
         cls.transaction_id += 1
         return str(cls.transaction_id)
 
-    # Intialize balance and list of transactions
     def __init__(self, balance: int):
+        # Intialize balance and list of transactions
         self.balance = balance
         self.transaction_history = []
 
-    # Deposit amount to account
     def deposit(self, amount: int):
+        # Deposit amount to account
         self.balance += amount
         transaction = Transaction(Account.generate_transaction_id(), date.today(), "Deposit", amount)
         # Raise error for invalid amount
@@ -27,21 +27,24 @@ class Account:
         self.transaction_history.append(transaction)
         return transaction
 
-    # Withdraw amount to account
     def withdraw(self, amount: int):
         # Raise error for invalid amount
         if self.balance < amount:
             raise ValueError("Insufficient balance")
+        # Withdraw amount to account
         self.balance -= amount
         transaction = Transaction(Account.generate_transaction_id(), date.today(), "Withdraw", amount)
         self.transaction_history.append(transaction)
         return transaction
 
     def get_balance(self):
+        # Get balance of account
         return self.balance
     
     def get_transaction_history(self):
+        # Get list of transaction_history
         return self.transaction_history
     
     def add_transaction(self, new_transaction: Transaction):
+        # Add transaction to transaction_history list
         self.transaction_history.append(new_transaction)
