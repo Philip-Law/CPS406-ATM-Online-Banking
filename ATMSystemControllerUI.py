@@ -12,7 +12,7 @@ class SampleApp(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
 
-        self.shared_data = {'Card': None, 'Account': tk.StringVar(value='None'), 'Balance':tk.IntVar()}
+        self.shared_data = {'Card': None, 'Account': tk.StringVar(value='None')}
         self.sys_controller = ATMSystemController()
 
         container = tk.Frame(self)
