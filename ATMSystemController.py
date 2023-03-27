@@ -14,7 +14,7 @@ class ATMSystemController:
     def get_cards(self):
         return self.cards
 
-    def verify_PIN(card: ATMCard, test_PIN: str) -> bool:
+    def verify_PIN(self, card: ATMCard, test_PIN: str) -> bool:
         return card.get_PIN() == test_PIN
 
     def find_card(self, name: str, card_number: int, card_pin: str) -> ATMCard:
