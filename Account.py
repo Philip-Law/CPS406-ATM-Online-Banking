@@ -21,16 +21,10 @@ class Account:
         # Deposit amount to account
         self.balance += amount
         transaction = Transaction(Account.generate_transaction_id(), date.today(), "Deposit", amount)
-        # Raise error for invalid amount
-        if self.balance <= 0:
-            raise ValueError("Invalid Deposit")
         self.transaction_history.append(transaction)
         return transaction
 
     def withdraw(self, amount: int):
-        # Raise error for invalid amount
-        if self.balance < amount:
-            raise ValueError("Insufficient balance")
         # Withdraw amount to account
         self.balance -= amount
         transaction = Transaction(Account.generate_transaction_id(), date.today(), "Withdraw", amount)
